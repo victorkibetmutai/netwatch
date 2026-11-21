@@ -3,7 +3,13 @@ import { checkPing } from './checkers/ping.js';
 import { checkTcp } from './checkers/tcp.js';
 import { checkHttp } from './checkers/http.js';
 import { publishEvent } from './events.js';
-import { sendStatusWebhook } from './webhook.js';
+import {
+  formatDownWebhookMessage,
+  formatDowntime,
+  formatRecoveryWebhookMessage,
+  sendStatusWebhook,
+  shouldSendStatusWebhook
+} from './webhook.js';
 
 const runningChecks = new Set();
 
@@ -49,22 +55,39 @@ export async function runMonitorCheck(monitorId) {
     );
 
     const previousStatus = monitor.enabled ? monitor.current_status : 'paused';
+    const openIncidentBeforeCheck = db.prepare(`
+      SELECT started_at, reason
+      FROM incidents
+      WHERE monitor_id = ? AND ended_at IS NULL
+    `).get(monitor.id);
     const statusChange = applyStatusLogic(monitor, result, timestamp);
     const checkRecord = db.prepare(
       'SELECT * FROM checks WHERE monitor_id = ? ORDER BY id DESC LIMIT 1'
     ).get(monitor.id);
     publishEvent('check', { monitor_id: monitor.id, check: checkRecord });
-    if (statusChange.changed && previousStatus !== statusChange.currentStatus) {
+    if (
+      statusChange.changed
+      && previousStatus !== statusChange.currentStatus
+      && shouldSendStatusWebhook(previousStatus, statusChange.currentStatus)
+    ) {
       publishEvent('status-change', {
         monitor_id: monitor.id,
         from: previousStatus,
         to: statusChange.currentStatus
       });
-      void sendStatusWebhook(
-        monitor.name,
-        previousStatus,
-        statusChange.currentStatus
-      );
+      let message;
+      if (statusChange.currentStatus === 'down') {
+        const openIncident = db.prepare(`
+          SELECT reason
+          FROM incidents
+          WHERE monitor_id = ? AND ended_at IS NULL
+        `).get(monitor.id);
+        message = formatDownWebhookMessage(monitor, openIncident?.reason || result.error, timestamp);
+      } else {
+        const downtime = formatDowntime(openIncidentBeforeCheck?.started_at, timestamp);
+        message = formatRecoveryWebhookMessage(monitor, downtime, timestamp);
+      }
+      void sendStatusWebhook(message);
     }
     return db.prepare('SELECT * FROM checks WHERE monitor_id = ? ORDER BY id DESC LIMIT 1').get(monitor.id);
   } finally {

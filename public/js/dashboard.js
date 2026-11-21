@@ -1,4 +1,5 @@
 import { apiRequest } from './api.js';
+import { openLiveEvents } from './events.js';
 
 const grid = document.getElementById('monitor-grid');
 const searchInput = document.getElementById('monitor-search');
@@ -271,7 +272,9 @@ grid.addEventListener('click', async (event) => {
 
 loadDashboard();
 
-// SSE automatically reconnects; reload data after each check or status transition.
-const eventSource = new EventSource('/api/events');
-eventSource.addEventListener('check', loadDashboard);
-eventSource.addEventListener('status-change', loadDashboard);
+// Fetch streaming accepts the bearer token; it reconnects after disconnect.
+openLiveEvents((eventName) => {
+  if (eventName === 'check' || eventName === 'status-change') {
+    loadDashboard();
+  }
+});

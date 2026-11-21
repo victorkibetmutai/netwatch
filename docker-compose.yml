@@ -8,6 +8,7 @@ services:
       DB_PATH: /app/data/netwatch.db
       CHECK_RETENTION_DAYS: 30
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in your shell or .env file}
+      REQUIRE_AUTH_FOR_READ: ${REQUIRE_AUTH_FOR_READ:-false}
     volumes:
       - netwatch-data:/app/data
     restart: unless-stopped

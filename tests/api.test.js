@@ -3,12 +3,13 @@ import request from 'supertest';
 
 let app;
 let db;
+let createApp;
 
 beforeAll(async () => {
   process.env.DB_PATH = ':memory:';
   const databaseModule = await import('../src/db/database.js');
   db = databaseModule.db;
-  ({ default: app } = await import('../src/app.js'));
+  ({ default: app, createApp } = await import('../src/app.js'));
 });
 
 beforeEach(() => {
@@ -82,5 +83,39 @@ describe('NetWatch API', () => {
     const response = await request(app).get('/api/summary');
     expect(response.status).toBe(200);
     expect(response.body.monitors).toBe(1);
+  });
+
+  it('allows read endpoints when requireAuthForRead is false', async () => {
+    const publicApp = createApp({ requireAuthForRead: false });
+    const monitors = await request(publicApp).get('/api/monitors');
+    const summary = await request(publicApp).get('/api/summary');
+    expect(monitors.status).toBe(200);
+    expect(summary.status).toBe(200);
+  });
+
+  it('requires authentication for read endpoints and events when enabled', async () => {
+    const protectedApp = createApp({ requireAuthForRead: true });
+
+    const monitors = await request(protectedApp).get('/api/monitors');
+    const summary = await request(protectedApp).get('/api/summary');
+    const events = await request(protectedApp).get('/api/events');
+    expect(monitors.status).toBe(401);
+    expect(summary.status).toBe(401);
+    expect(events.status).toBe(401);
+
+    const health = await request(protectedApp).get('/api/health');
+    expect(health.status).toBe(200);
+
+    const register = await request(protectedApp).post('/api/auth/register').send({
+      username: 'readadmin',
+      password: 'password123'
+    });
+    expect(register.status).toBe(201);
+
+    const headers = { Authorization: `Bearer ${register.body.token}` };
+    const protectedMonitors = await request(protectedApp)
+      .get('/api/monitors')
+      .set(headers);
+    expect(protectedMonitors.status).toBe(200);
   });
 });

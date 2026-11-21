@@ -1,5 +1,6 @@
 import { apiRequest } from './api.js';
 import { formatChartTimestamp, insertGapBreaks } from './chartUtils.js';
+import { openLiveEvents } from './events.js';
 
 const monitorId = new URLSearchParams(window.location.search).get('id');
 const rangeSelect = document.getElementById('range-select');
@@ -264,12 +265,11 @@ document.getElementById('detail-check').addEventListener('click', async () => {
 
 loadDetail();
 
-const eventSource = new EventSource('/api/events');
-eventSource.addEventListener('check', (event) => {
-  const data = JSON.parse(event.data);
-  if (Number(data.monitor_id) === Number(monitorId)) loadDetail();
-});
-eventSource.addEventListener('status-change', (event) => {
-  const data = JSON.parse(event.data);
-  if (Number(data.monitor_id) === Number(monitorId)) loadDetail();
+openLiveEvents((_eventName, rawData) => {
+  try {
+    const data = JSON.parse(rawData);
+    if (Number(data.monitor_id) === Number(monitorId)) loadDetail();
+  } catch {
+    // Ignore malformed live event data and keep the stream open.
+  }
 });

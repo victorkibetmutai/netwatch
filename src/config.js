@@ -5,6 +5,12 @@ dotenv.config();
 const retentionDays = Number.parseInt(process.env.CHECK_RETENTION_DAYS || '30', 10);
 export const JWT_SECRET_PLACEHOLDER = 'replace-this-before-using-auth';
 
+export function parseRequireAuthForRead(value) {
+  return ['true', '1', 'yes', 'on'].includes(
+    String(value || 'false').trim().toLowerCase()
+  );
+}
+
 export function validateJwtSecret(environment = process.env.NODE_ENV || 'development', secret) {
   if (arguments.length < 2) {
     secret = process.env.JWT_SECRET;
@@ -38,5 +44,6 @@ export const config = {
   dbPath: process.env.DB_PATH || './data/netwatch.db',
   jwtSecret,
   webhookUrl: process.env.WEBHOOK_URL || '',
+  requireAuthForRead: parseRequireAuthForRead(process.env.REQUIRE_AUTH_FOR_READ),
   checkRetentionDays: Number.isFinite(retentionDays) && retentionDays > 0 ? retentionDays : 30
 };

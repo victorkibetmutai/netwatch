@@ -72,6 +72,7 @@ docker compose down
 | `JWT_SECRET` | Secret used to sign JWT tokens; required in production and at least 32 characters | Development placeholder warning |
 | `CHECK_RETENTION_DAYS` | Delete checks older than this | `30` |
 | `WEBHOOK_URL` | Optional Discord or Slack webhook URL | Empty |
+| `REQUIRE_AUTH_FOR_READ` | Require a valid JWT for all `/api` routes except `/api/health` and auth endpoints, including `/api/events` | `false` |
 
 Never commit `.env`. Always replace the JWT secret in production.
 
