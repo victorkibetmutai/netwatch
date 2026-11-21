@@ -4,5 +4,7 @@ import { startScheduler } from './services/scheduler.js';
 
 app.listen(config.port, () => {
   console.log(`NetWatch listening on http://localhost:${config.port}`);
-  startScheduler();
+  if (process.env.NODE_ENV !== 'test') {
+    startScheduler();
+  }
 });

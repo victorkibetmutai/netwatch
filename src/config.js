@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 
-dotenv.config();
+if (process.env.NODE_ENV !== 'test') {
+  dotenv.config();
+}
 
 const retentionDays = Number.parseInt(process.env.CHECK_RETENTION_DAYS || '30', 10);
 export const JWT_SECRET_PLACEHOLDER = 'replace-this-before-using-auth';

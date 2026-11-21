@@ -6,7 +6,12 @@ let db;
 let createApp;
 
 beforeAll(async () => {
+  process.env.NODE_ENV = 'test';
   process.env.DB_PATH = ':memory:';
+  process.env.JWT_SECRET = 'fixed-vitest-secret-value-with-at-least-32-characters';
+  process.env.REQUIRE_AUTH_FOR_READ = 'false';
+  process.env.WEBHOOK_URL = '';
+  process.env.CHECK_RETENTION_DAYS = '30';
   const databaseModule = await import('../src/db/database.js');
   db = databaseModule.db;
   ({ default: app, createApp } = await import('../src/app.js'));
