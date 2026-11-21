@@ -1,5 +1,5 @@
 # NetWatch
-
+[![CI](https://github.com/victorkibetmutai/netwatch/actions/workflows/ci.yml/badge.svg)](https://github.com/victorkibetmutai/netwatch/actions/workflows/ci.yml)
 NetWatch is a self-hosted network monitoring dashboard for home labs, small offices, and developers. It runs PING, TCP port, and HTTP/HTTPS checks on a schedule, tracks uptime and latency, opens an incident after repeated failures, closes it on recovery, and can send webhook alerts.
 
 ## Screenshots
