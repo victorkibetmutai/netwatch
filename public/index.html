@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetWatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="/" aria-label="NetWatch dashboard">
+        <span class="brand-mark">NW</span>
+        <span>NetWatch</span>
+      </a>
+      <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle light or dark theme">Theme</button>
+    </header>
+
+    <main class="container">
+      <section class="toolbar" aria-labelledby="dashboard-title">
+        <div>
+          <p class="eyebrow">Network overview</p>
+          <h1 id="dashboard-title">Dashboard</h1>
+        </div>
+        <button id="add-monitor" class="button primary" type="button">+ Add monitor</button>
+      </section>
+
+      <div id="global-error" class="alert hidden" role="alert"></div>
+
+      <section id="summary-cards" class="summary-grid" aria-label="Summary">
+        <article class="summary-card skeleton"></article>
+        <article class="summary-card skeleton"></article>
+        <article class="summary-card skeleton"></article>
+        <article class="summary-card skeleton"></article>
+        <article class="summary-card skeleton"></article>
+      </section>
+
+      <section class="monitor-section">
+        <div class="filters">
+          <label class="search-field">
+            <span class="sr-only">Search monitors</span>
+            <input id="monitor-search" type="search" placeholder="Search monitors..." autocomplete="off">
+          </label>
+          <div class="filter-buttons" aria-label="Filter monitors">
+            <button class="filter-button active" type="button" data-filter="all">All</button>
+            <button class="filter-button" type="button" data-filter="up">Up</button>
+            <button class="filter-button" type="button" data-filter="down">Down</button>
+            <button class="filter-button" type="button" data-filter="paused">Paused</button>
+          </div>
+        </div>
+
+        <div id="loading-state" class="loading-state">Loading monitors...</div>
+        <div id="monitor-grid" class="monitor-grid"></div>
+        <div id="empty-state" class="empty-state hidden">
+          <div class="empty-icon">NW</div>
+          <h2>No monitors found</h2>
+          <p id="empty-message">Add your first monitor to start watching your network.</p>
+        </div>
+      </section>
+    </main>
+
+    <div id="monitor-modal" class="modal-backdrop hidden" role="presentation">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <header class="modal-header">
+          <h2 id="modal-title">Add monitor</h2>
+          <button id="close-modal" class="icon-button" type="button" aria-label="Close modal">Close</button>
+        </header>
+        <form id="monitor-form" novalidate>
+          <input id="monitor-id" type="hidden">
+          <label>Name
+            <input id="monitor-name" name="name" maxlength="60" required>
+          </label>
+          <label>Type
+            <select id="monitor-type" name="type" required>
+              <option value="ping">PING</option>
+              <option value="tcp">TCP PORT</option>
+              <option value="http">HTTP/HTTPS</option>
+            </select>
+          </label>
+          <label>Target
+            <input id="monitor-target" name="target" required placeholder="example.com or https://example.com">
+          </label>
+          <label id="port-group" class="conditional hidden">Port
+            <input id="monitor-port" name="port" type="number" min="1" max="65535">
+          </label>
+          <label id="expected-status-group" class="conditional hidden">Expected status
+            <input id="monitor-expected-status" name="expected_status" type="number" min="100" max="599" value="200">
+          </label>
+          <div class="form-grid">
+            <label>Check interval (seconds)
+              <input id="monitor-interval" name="interval_seconds" type="number" min="10" value="60" required>
+            </label>
+            <label>Timeout (milliseconds)
+              <input id="monitor-timeout" name="timeout_ms" type="number" min="1" max="30000" value="5000" required>
+            </label>
+            <label>Failure threshold
+              <input id="monitor-failure-threshold" name="failure_threshold" type="number" min="1" max="100" value="3" required>
+            </label>
+            <label class="checkbox-label">
+              <input id="monitor-enabled" name="enabled" type="checkbox" checked>
+              Enabled
+            </label>
+          </div>
+          <div id="form-error" class="alert hidden" role="alert"></div>
+          <footer class="modal-actions">
+            <button id="cancel-modal" class="button secondary" type="button">Cancel</button>
+            <button id="save-monitor" class="button primary" type="submit">Save monitor</button>
+          </footer>
+        </form>
+      </section>
+    </div>
+
+    <script type="module" src="/js/theme.js"></script>
+    <script type="module" src="/js/dashboard.js"></script>
+  </body>
+</html>

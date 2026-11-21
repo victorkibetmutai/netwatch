@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NetWatch</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body class="auth-page">
+    <main class="auth-card">
+      <a class="brand auth-brand" href="/" aria-label="NetWatch dashboard">
+        <span class="brand-mark">NW</span>
+        <span>NetWatch</span>
+      </a>
+      <h1>Sign in</h1>
+      <p class="auth-description" id="auth-description">Use your NetWatch account.</p>
+      <form id="auth-form" novalidate>
+        <label>Username
+          <input id="username" name="username" minlength="3" maxlength="50" autocomplete="username" required>
+        </label>
+        <label>Password
+          <input id="password" name="password" minlength="8" type="password" autocomplete="current-password" required>
+        </label>
+        <div id="auth-error" class="alert hidden" role="alert"></div>
+        <button id="auth-submit" class="button primary auth-submit" type="submit">Login</button>
+      </form>
+      <button id="auth-mode" class="text-button" type="button">Create the first account</button>
+    </main>
+    <script type="module" src="/js/theme.js"></script>
+    <script type="module" src="/js/auth.js"></script>
+  </body>
+</html>

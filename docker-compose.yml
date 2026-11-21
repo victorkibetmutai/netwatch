@@ -1,0 +1,15 @@
+services:
+  netwatch:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_PATH: /app/data/netwatch.db
+      CHECK_RETENTION_DAYS: 30
+    volumes:
+      - netwatch-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  netwatch-data:
