@@ -2,6 +2,14 @@
 
 NetWatch is a self-hosted network monitoring dashboard for home labs, small offices, and developers. It runs PING, TCP port, and HTTP/HTTPS checks on a schedule, tracks uptime and latency, opens an incident after repeated failures, closes it on recovery, and can send webhook alerts.
 
+## Screenshots
+
+![Dashboard with monitors down](docs/screenshots/dashboard-down.png)
+
+![Dashboard with all monitors recovered](docs/screenshots/dashboard-up.png)
+
+![Monitor detail with incident history](docs/screenshots/monitor-incident-history.png)
+
 ## Features
 
 - PING, TCP port, and HTTP/HTTPS monitors with configurable intervals, timeouts, failure thresholds, and expected HTTP status
