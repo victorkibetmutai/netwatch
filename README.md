@@ -69,11 +69,23 @@ docker compose down
 |---|---|---|
 | `PORT` | HTTP server port | `3000` |
 | `DB_PATH` | SQLite database path | `./data/netwatch.db` |
-| `JWT_SECRET` | Secret used to sign JWT tokens | Development fallback |
+| `JWT_SECRET` | Secret used to sign JWT tokens; required in production and at least 32 characters | Development placeholder warning |
 | `CHECK_RETENTION_DAYS` | Delete checks older than this | `30` |
 | `WEBHOOK_URL` | Optional Discord or Slack webhook URL | Empty |
 
 Never commit `.env`. Always replace the JWT secret in production.
+
+Generate a secure secret in PowerShell:
+
+```powershell
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Copy the generated value into `.env`:
+
+```text
+JWT_SECRET=<generated-secret>
+```
 
 ## Status and Incident Logic
 
